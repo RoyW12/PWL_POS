@@ -8,6 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\StokController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\AuthController;
 
 
 /*
@@ -20,6 +21,22 @@ use App\Http\Controllers\SupplierController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+Route::pattern('id', '[0-9]+');
+
+Route::get('login', [AuthController::class, 'login'])->name('login');
+Route::post('login', [AuthController::class, 'postlogin']);
+Route::get('logout', [AuthController::class, 'logout'])->middleware('auth');
+
+Route::middleware(['auth'])->group(function () {});
+
+
+
+
+
+
+
+
 
 
 

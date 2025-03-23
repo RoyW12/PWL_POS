@@ -7,8 +7,8 @@ use App\Models\LevelModel;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 
 class UserModel extends Model
@@ -17,8 +17,15 @@ class UserModel extends Model
 
     protected $table = 'm_user';
     protected $primaryKey = 'user_id';
+    protected $fillable = ['username', 'password', 'nama', 'level_id', 'created_at', 'updated_at'];
 
-    protected $fillable = ['username', 'nama', 'password', 'level_id'];
+    protected $hidden = ['password'];
+
+    protected $casts = ['password' => 'hashed'];
+
+    /**
+     * Relasi ke tabel level
+     */
     public function level(): BelongsTo
     {
         return $this->belongsTo(LevelModel::class, 'level_id', 'level_id');
