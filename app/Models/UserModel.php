@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 
-class UserModel extends Model
+class UserModel extends Authenticatable
 {
     use HasFactory;
 
