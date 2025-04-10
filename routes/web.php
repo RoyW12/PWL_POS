@@ -113,6 +113,8 @@ Route::middleware(['auth'])->group(function () {
 
     });
     Route::middleware(['authorize:ADM,MNG'])->group(function () {
+        Route::get('/barang/import', [BarangController::class, 'import']); // ajax form
+        Route::post('/barang/import_ajax', [BarangController::class, 'import_ajax']);
         Route::get('/barang', [BarangController::class, 'index']);
         Route::post('/barang/list', [BarangController::class, 'list']);
         Route::get('/barang/create_ajax', [BarangController::class, 'create_ajax']); // ajax form create
@@ -121,6 +123,7 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/barang/{id}/update_ajax', [BarangController::class, 'update_ajax']); // ajax update
         Route::get('/barang/{id}/delete_ajax', [BarangController::class, 'confirm_ajax']); // ajax form confirm
         Route::delete('/barang/{id}/delete_ajax', [BarangController::class, 'delete_ajax']); // ajax delete
+
     });
 
     // Route::group(['prefix' => 'barang'], function () {
