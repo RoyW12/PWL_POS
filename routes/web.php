@@ -36,29 +36,29 @@ Route::post('register', [AuthController::class, 'store_register']);
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/', [WelcomeController::class, 'index']);
-
     Route::group(['prefix' => 'user'], function () {
         Route::get('/', [UserController::class, 'index']); // Menampilkan halaman user
         Route::post('/list', [UserController::class, 'list']); // Menampilkan data user dalam bentuk JSON (DataTables)
         Route::get('/create', [UserController::class, 'create']); // Menampilkan form tambah user
         Route::post('/', [UserController::class, 'store']); // Menyimpan user baru
-
         Route::get('/create_ajax', [UserController::class, 'create_ajax']); // Menampilkan form tambah user (AJAX)
         Route::post('/ajax', [UserController::class, 'store_ajax']); // Menyimpan user baru (AJAX)
+        Route::get('/import', [UserController::class, 'import']); // ajax form
+        Route::post('/import_ajax', [UserController::class, 'import_ajax']);
 
         Route::get('/{id}', [UserController::class, 'show']); // Menampilkan detail user
         Route::get('/{id}/edit', [UserController::class, 'edit']); // Menampilkan form edit user
         Route::put('/{id}', [UserController::class, 'update']); // Menyimpan perubahan user
         Route::get('/{id}/edit_ajax', [UserController::class, 'edit_ajax']); // Menampilkan form edit user (AJAX)
         Route::put('/{id}/update_ajax', [UserController::class, 'update_ajax']); // Menyimpan perubahan user (AJAX)
-
         Route::get('/{id}/delete_ajax', [UserController::class, 'confirm_ajax']); // Menghapus user
         Route::delete('/{id}/delete_ajax', [UserController::class, 'delete_ajax']); // Menghapus user
-
         Route::delete('/{id}', [UserController::class, 'destroy']); // Menghapus user
-
     });
+
     Route::middleware(['authorize:ADM'])->group(function () {
+        Route::get('/level/import', [LevelController::class, 'import']); // ajax form
+        Route::post('/level/import_ajax', [LevelController::class, 'import_ajax']);
         Route::get('/level', [LevelController::class, 'index']);
         Route::post('/level/list', [LevelController::class, 'list']); // untuk list json datatables
         Route::get('/level/create', [LevelController::class, 'create']);
@@ -66,6 +66,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/level/{id}/edit', [LevelController::class, 'edit']); // untuk tampilkan form edit
         Route::put('/level/{id}', [LevelController::class, 'update']); // untuk proses update data
         Route::delete('/level/{id}', [LevelController::class, 'destroy']); // untuk proses hapus data
+        Route::get('/level/create_ajax', [LevelController::class, 'create_ajax']); // Menampilkan form tambah user (AJAX)
+        Route::post('/level/ajax', [LevelController::class, 'store_ajax']); // Menyimpan user baru (AJAX)
+
     });
 
 
@@ -105,6 +108,9 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/{id}/update_ajax', [KategoriController::class, 'update_ajax']); // Menyimpan perubahan user (AJAX)
         Route::get('/{id}/delete_ajax', [KategoriController::class, 'confirm_ajax']); // Menghapus user
         Route::delete('/{id}/delete_ajax', [KategoriController::class, 'delete_ajax']);
+        Route::get('/import', [KategoriController::class, 'import']); // ajax form
+        Route::post('/import_ajax', [KategoriController::class, 'import_ajax']);
+
 
 
 
@@ -169,6 +175,9 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/{id}/update_ajax', [SupplierController::class, 'update_ajax']); // Menyimpan perubahan user (AJAX)
         Route::get('/{id}/delete_ajax', [SupplierController::class, 'confirm_ajax']); // Menghapus user
         Route::delete('/{id}/delete_ajax', [SupplierController::class, 'delete_ajax']);
+
+        Route::get('/import', [SupplierController::class, 'import']); // ajax form
+        Route::post('/import_ajax', [SupplierController::class, 'import_ajax']);
 
         Route::get('/{id}', [SupplierController::class, 'show']);        // menampilkan detail user
 
