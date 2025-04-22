@@ -9,7 +9,7 @@ use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\StokController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\AuthController;
-
+use App\Http\Controllers\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +36,20 @@ Route::post('register', [AuthController::class, 'store_register']);
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/', [WelcomeController::class, 'index']);
+    // Route::get('/profile', [ProfileController::class, 'index']);
+
+    Route::group(['prefix' => 'profile'], function () {
+        Route::get('/', [ProfileController::class, 'index']);
+        Route::get('/create_ajax', [ProfileController::class, 'create_ajax'])->name('profile.create.ajax');
+        Route::post('/update', [ProfileController::class, 'updateAjax'])->name('profile.update.ajax');
+    });
+
+
+
+
+
+
+
     Route::group(['prefix' => 'user'], function () {
         Route::get('/export_pdf', [UserController::class, 'export_pdf']); // ajax form
 
