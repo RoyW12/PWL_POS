@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Validator;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Yajra\DataTables\Facades\DataTables;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Validation\Rule;
+
 
 class BarangController extends Controller
 {
@@ -44,17 +46,9 @@ class BarangController extends Controller
         }
         return DataTables::of($barang)
             ->addIndexColumn()
-            ->addColumn('aksi', function ($barang) { // menambahkan kolom aksi
-                /*$btn = '<a href="'.url('/barang/' . $barang->barang_id).'" class="btn btninfo btn-sm">Detail</a> ';
-$btn .= '<a href="'.url('/barang/' . $barang->barang_id .
-'/edit').'"class="btn btn-warning btn-sm">Edit</a> ';
-$btn .= '<form class="d-inline-block" method="POST" action="'.
-url('/barang/'.$barang->barang_id).'">'
-. csrf_field() . method_field('DELETE') .
-'<button type="submit" class="btn btn-danger btn-sm" onclick="return
-confirm(\'Apakah Kita yakit menghapus data ini?\');">Hapus</button></form>';*/
+            ->addColumn('aksi', function ($barang) {
                 $btn = '<button onclick="modalAction(\'' . url('/barang/' . $barang->barang_id
-                    . '/show_ajax') . '\')" class="btn btn-info btn-sm">Detail</button> ';
+                    . '/show') . '\')" class="btn btn-info btn-sm">Detail</button> ';
                 $btn .= '<button onclick="modalAction(\'' . url('/barang/' . $barang->barang_id . '/edit_ajax') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
                 $btn .= '<button onclick="modalAction(\'' . url('/barang/' . $barang->barang_id . '/delete_ajax') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
                 return $btn;
@@ -67,6 +61,7 @@ confirm(\'Apakah Kita yakit menghapus data ini?\');">Hapus</button></form>';*/
         $kategori = KategoriModel::select('kategori_id', 'kategori_nama')->get();
         return view('barang.create_ajax')->with('kategori', $kategori);
     }
+
     public function store_ajax(Request $request)
     {
         if ($request->ajax() || $request->wantsJson()) {
@@ -98,6 +93,28 @@ confirm(\'Apakah Kita yakit menghapus data ini?\');">Hapus</button></form>';*/
         }
         redirect('/');
     }
+
+    public function show($id)
+    {
+        $barang = BarangModel::with('kategori')->find($id);
+
+        if (!$barang) {
+            return redirect('/barang')->with('error', 'Data barang tidak ditemukan!');
+        }
+
+        $activeMenu = 'barang';
+        $page = (object) [
+            'title' => 'Detail Data Barang'
+        ];
+        $breadcrumb = (object) [
+            'title' => 'Data Barang',
+            'list' => ['Home', 'Barang']
+        ];
+
+        return view('barang.show', compact('barang', 'page', 'activeMenu', 'breadcrumb'));
+    }
+
+
     public function edit_ajax($id)
     {
         $barang = BarangModel::find($id);
@@ -108,42 +125,54 @@ confirm(\'Apakah Kita yakit menghapus data ini?\');">Hapus</button></form>';*/
     {
         // cek apakah request dari ajax
         if ($request->ajax() || $request->wantsJson()) {
-            $rules = [
-                'kategori_id' => ['required', 'integer', 'exists:m_kategori,kategori_id'],
-                'barang_kode' => [
-                    'required',
-                    'min:3',
-                    'max:20',
-                    'unique:m_barang,barang_kode, ' . $id . ',barang_id'
-                ],
-                'barang_nama' => ['required', 'string', 'max:100'],
-                'harga_beli' => ['required', 'numeric'],
-                'harga_jual' => ['required', 'numeric'],
-            ];
-            // use Illuminate\Support\Facades\Validator;
-            $validator = Validator::make($request->all(), $rules);
-            if ($validator->fails()) {
-                return response()->json([
-                    'status' => false, // respon json, true: berhasil, false: gagal
-                    'message' => 'Validasi gagal.',
-                    'msgField' => $validator->errors() // menunjukkan field mana yang error
-                ]);
-            }
             $check = BarangModel::find($id);
-            if ($check) {
-                $check->update($request->all());
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Data berhasil diupdate'
-                ]);
-            } else {
+
+            if (!$check) {
                 return response()->json([
                     'status' => false,
                     'message' => 'Data tidak ditemukan'
                 ]);
             }
+
+            // Atur aturan validasi
+            $rules = [
+                'barang_nama' => ['required', 'string', 'max:100'],
+                'harga_beli' => ['required', 'numeric'],
+                'harga_jual' => ['required', 'numeric'],
+            ];
+
+            // Jika barang_kode diubah, tambahkan validasi unique
+            if ($request->barang_kode !== $check->barang_kode) {
+                $rules['barang_kode'] = [
+                    'required',
+                    'min:3',
+                    'max:20',
+                    Rule::unique('m_barang', 'barang_kode')
+                ];
+            } else {
+                $rules['barang_kode'] = ['required', 'min:3', 'max:20'];
+            }
+
+            $validator = Validator::make($request->all(), $rules);
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validasi gagal.',
+                    'msgField' => $validator->errors()
+                ]);
+            }
+
+            // Update data
+            $check->update($request->all());
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Data berhasil diupdate'
+            ]);
         }
-        return redirect('/');
+
+        // Jika bukan request ajax, redirect ke halaman /barang
+        return redirect('/barang');
     }
     public function confirm_ajax($id)
     {

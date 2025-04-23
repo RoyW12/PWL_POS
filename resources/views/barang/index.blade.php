@@ -84,7 +84,8 @@ btn-success">Tambah Data
                     }
                 },
                 columns: [{
-                    data: "No_Urut",
+                    data: "DT_RowIndex",
+                    name: "DT_RowIndex",
                     className: "text-center",
                     width: "5%",
                     orderable: false,

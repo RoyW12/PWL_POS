@@ -52,7 +52,6 @@ Route::middleware(['auth'])->group(function () {
 
     Route::group(['prefix' => 'user'], function () {
         Route::get('/export_pdf', [UserController::class, 'export_pdf']); // ajax form
-
         Route::get('/', [UserController::class, 'index']); // Menampilkan halaman user
         Route::post('/list', [UserController::class, 'list']); // Menampilkan data user dalam bentuk JSON (DataTables)
         Route::get('/create', [UserController::class, 'create']); // Menampilkan form tambah user
@@ -62,10 +61,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/import', [UserController::class, 'import']); // ajax form
         Route::post('/import_ajax', [UserController::class, 'import_ajax']);
         Route::get('/export_excel', [UserController::class, 'export_excel']); // ajax form
-
-
-
-        Route::get('/{id}', [UserController::class, 'show']); // Menampilkan detail user
+        Route::get('/{id}/show', [UserController::class, 'show']); // Menampilkan detail user
         Route::get('/{id}/edit', [UserController::class, 'edit']); // Menampilkan form edit user
         Route::put('/{id}', [UserController::class, 'update']); // Menyimpan perubahan user
         Route::get('/{id}/edit_ajax', [UserController::class, 'edit_ajax']); // Menampilkan form edit user (AJAX)
@@ -75,12 +71,27 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/{id}', [UserController::class, 'destroy']); // Menghapus user
     });
 
+    Route::middleware(['authorize:ADM,MNG'])->group(function () {
+        Route::get('/barang/import', [BarangController::class, 'import']); // ajax form
+        Route::post('/barang/import_ajax', [BarangController::class, 'import_ajax']);
+        Route::get('/barang/export_excel', [BarangController::class, 'export_excel']); // ajax form
+        Route::get('/barang/export_pdf', [BarangController::class, 'export_pdf']); // ajax form
+        Route::get('/barang', [BarangController::class, 'index']);
+        Route::post('/barang/list', [BarangController::class, 'list']);
+        Route::get('/barang/create_ajax', [BarangController::class, 'create_ajax']); // ajax form create
+        Route::post('/barang_ajax', [BarangController::class, 'store_ajax']); // ajax store
+        Route::get('/barang/{id}/edit_ajax', [BarangController::class, 'edit_ajax']); // ajax form edit
+        Route::put('/barang/{id}/update_ajax', [BarangController::class, 'update_ajax']); // ajax update
+        Route::get('/barang/{id}/delete_ajax', [BarangController::class, 'confirm_ajax']); // ajax form confirm
+        Route::delete('/barang/{id}/delete_ajax', [BarangController::class, 'delete_ajax']); // ajax delete
+        Route::get('/barang/{id}/show', [BarangController::class, 'show']);
+    });
+
     Route::middleware(['authorize:ADM'])->group(function () {
         Route::get('/level/import', [LevelController::class, 'import']); // ajax form
         Route::post('/level/import_ajax', [LevelController::class, 'import_ajax']);
         Route::get('/level/export_excel', [LevelController::class, 'export_excel']); // ajax form
         Route::get('/level/export_pdf', [LevelController::class, 'export_pdf']); // ajax form
-
         Route::get('/level', [LevelController::class, 'index']);
         Route::post('/level/list', [LevelController::class, 'list']); // untuk list json datatables
         Route::get('/level/create', [LevelController::class, 'create']);
@@ -90,7 +101,7 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/level/{id}', [LevelController::class, 'destroy']); // untuk proses hapus data
         Route::get('/level/create_ajax', [LevelController::class, 'create_ajax']); // Menampilkan form tambah user (AJAX)
         Route::post('/level/ajax', [LevelController::class, 'store_ajax']); // Menyimpan user baru (AJAX)
-
+        Route::get('/level/{id}/show', [LevelController::class, 'show']);        // menampilkan detail user
 
     });
 
@@ -135,34 +146,10 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/import_ajax', [KategoriController::class, 'import_ajax']);
         Route::get('/export_excel', [KategoriController::class, 'export_excel']); // ajax form
         Route::get('/export_pdf', [KategoriController::class, 'export_pdf']); // ajax form
-
-
-
-
-
-
-
-        Route::get('/{id}', [KategoriController::class, 'show']);        // menampilkan detail user
-
+        Route::get('/{id}/show', [KategoriController::class, 'show']);        // menampilkan detail user
     });
-    Route::middleware(['authorize:ADM,MNG'])->group(function () {
-        Route::get('/barang/import', [BarangController::class, 'import']); // ajax form
-        Route::post('/barang/import_ajax', [BarangController::class, 'import_ajax']);
-
-        Route::get('/barang/export_excel', [BarangController::class, 'export_excel']); // ajax form
-        Route::get('/barang/export_pdf', [BarangController::class, 'export_pdf']); // ajax form
-
-        Route::get('/barang', [BarangController::class, 'index']);
-        Route::post('/barang/list', [BarangController::class, 'list']);
-        Route::get('/barang/create_ajax', [BarangController::class, 'create_ajax']); // ajax form create
-        Route::post('/barang_ajax', [BarangController::class, 'store_ajax']); // ajax store
-        Route::get('/barang/{id}/edit_ajax', [BarangController::class, 'edit_ajax']); // ajax form edit
-        Route::put('/barang/{id}/update_ajax', [BarangController::class, 'update_ajax']); // ajax update
-        Route::get('/barang/{id}/delete_ajax', [BarangController::class, 'confirm_ajax']); // ajax form confirm
-        Route::delete('/barang/{id}/delete_ajax', [BarangController::class, 'delete_ajax']); // ajax delete
 
 
-    });
 
     // Route::group(['prefix' => 'barang'], function () {
     //     Route::get('/', [BarangController::class, 'index']);           // menampilkan halaman awal user
@@ -192,30 +179,29 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/{id}', [StokController::class, 'update']);      // menyimpan perubahan data user
         Route::delete('/{id}', [StokController::class, 'destroy']);  // menghapus data user
     });
+
+
+
     Route::group(['prefix' => 'supplier'], function () {
         Route::get('/', [SupplierController::class, 'index']);           // menampilkan halaman awal user
         Route::post('/list', [SupplierController::class, 'list']);       // menampilkan data user dalam bentuk json untuk datatables
         Route::get('/create', [SupplierController::class, 'create']);    // menampilkan halaman form tambah user
         Route::post('/', [SupplierController::class, 'store']);          // menyimpan data user baru
-        Route::get('/{id}/edit', [SupplierController::class, 'edit']);   // menampilkan halaman form edit user
-        Route::put('/{id}', [SupplierController::class, 'update']);      // menyimpan perubahan data user
-        Route::delete('/{id}', [SupplierController::class, 'destroy']);  // menghapus data user
-
+        // menghapus data user
         Route::get('/create_ajax', [SupplierController::class, 'create_ajax']); // Menampilkan form tambah user (AJAX)
         Route::post('/ajax', [SupplierController::class, 'store_ajax']);
-        Route::get('/{id}/edit_ajax', [SupplierController::class, 'edit_ajax']); // Menampilkan form edit user (AJAX)
-        Route::put('/{id}/update_ajax', [SupplierController::class, 'update_ajax']); // Menyimpan perubahan user (AJAX)
-        Route::get('/{id}/delete_ajax', [SupplierController::class, 'confirm_ajax']); // Menghapus user
-        Route::delete('/{id}/delete_ajax', [SupplierController::class, 'delete_ajax']);
-
         Route::get('/import', [SupplierController::class, 'import']); // ajax form
         Route::post('/import_ajax', [SupplierController::class, 'import_ajax']);
         Route::get('/export_excel', [SupplierController::class, 'export_excel']); // ajax form
         Route::get('/export_pdf', [SupplierController::class, 'export_pdf']); // ajax form
 
-
-
         Route::get('/{id}', [SupplierController::class, 'show']);        // menampilkan detail user
-
+        Route::get('/{id}/edit', [SupplierController::class, 'edit']);   // menampilkan halaman form edit user
+        Route::put('/{id}', [SupplierController::class, 'update']);      // menyimpan perubahan data user
+        Route::delete('/{id}', [SupplierController::class, 'destroy']);
+        Route::get('/{id}/edit_ajax', [SupplierController::class, 'edit_ajax']); // Menampilkan form edit user (AJAX)
+        Route::put('/{id}/update_ajax', [SupplierController::class, 'update_ajax']); // Menyimpan perubahan user (AJAX)
+        Route::get('/{id}/delete_ajax', [SupplierController::class, 'confirm_ajax']); // Menghapus user
+        Route::delete('/{id}/delete_ajax', [SupplierController::class, 'delete_ajax']);
     });
 });

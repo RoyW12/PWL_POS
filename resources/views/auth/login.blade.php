@@ -56,15 +56,21 @@
                     <div class="row">
                         <div class="col-8">
                             <div class="icheck-primary">
-                                <input type="checkbox" id="remember"><label for="remember">Remember Me</label>
+                                <input type="checkbox" id="remember">
+                                <label for="remember">Remember Me</label>
                             </div>
                         </div>
-                        <!-- /.col -->
-                        <div class="col-4">
-                            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+                        <div class="col-4 d-grid">
+                            <button type="submit" class="btn btn-primary">Sign In</button>
                         </div>
-                        <!-- /.col -->
                     </div>
+
+                    <div class="row mt-3">
+                        <div class="col text-center">
+                            <a href="{{ url('/register') }}" class="text-decoration-none">Belum punya akun? Daftar</a>
+                        </div>
+                    </div>
+
                 </form>
             </div>
             <!-- /.card-body -->
@@ -104,13 +110,13 @@
                         maxlength: 20
                     }
                 },
-                submitHandler: function(form) { // ketika valid, maka bagian yg akan dijalankan
+                submitHandler: function(form) {
                     $.ajax({
                         url: form.action,
                         type: form.method,
                         data: $(form).serialize(),
                         success: function(response) {
-                            if (response.status) { // jika sukses
+                            if (response.status) {
                                 Swal.fire({
                                     icon: 'success',
                                     title: 'Berhasil',
