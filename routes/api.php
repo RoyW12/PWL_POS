@@ -2,6 +2,11 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\LevelController;
+use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\KategoriController;
+use App\Http\Controllers\Api\BarangController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -23,3 +28,28 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::post('logout', App\Http\Controllers\Api\LogoutController::class)->name('logout');
+
+
+Route::get('levels', [LevelController::class, 'index']);
+Route::post('levels', [LevelController::class, 'store']);
+Route::get('levels/{level}', [LevelController::class, 'show']);
+Route::put('levels/{level}', [LevelController::class, 'update']);
+Route::delete('levels/{level}', [LevelController::class, 'destroy']);
+
+Route::get('users', [UserController::class, 'index']);
+Route::post('users', [UserController::class, 'store']);
+Route::get('users/{user}', [UserController::class, 'show']);
+Route::put('users/{user}', [UserController::class, 'update']);
+Route::delete('users/{user}', [UserController::class, 'destroy']);
+
+Route::get('categories', [KategoriController::class, 'index']);
+Route::post('categories', [KategoriController::class, 'store']);
+Route::get('categories/{kategori}', [KategoriController::class, 'show']);
+Route::put('categories/{kategori}', [KategoriController::class, 'update']);
+Route::delete('categories/{kategori}', [KategoriController::class, 'destroy']);
+
+Route::get('products', [BarangController::class, 'index']);
+Route::post('products', [BarangController::class, 'store']);
+Route::get('products/{barang}', [BarangController::class, 'show']);
+Route::put('products/{barang}', [BarangController::class, 'update']);
+Route::delete('products/{barang}', [BarangController::class, 'destroy']);
